@@ -32,12 +32,12 @@ internal class FindGameCommand : CommandHandler, IFindGameCommand
             var gamesOwners = _gameListHandler.FindGames(gameName);
             if (gamesOwners.IsNullOrEmpty())
             {
-                Writer.WriteLine("No simillar games found.");
+                Writer.WriteLine("No similar games found.");
                 return;
             }
             foreach(var gamesOwner in gamesOwners)
             {
-                Writer.WriteLine($"Found account {gamesOwner.Account.Name}, that owns {gamesOwner.Games.Length} simillar games:");
+                Writer.WriteLine($"Found account {gamesOwner.Account.Name}, that owns {gamesOwner.Games.Length} similar games:");
                 foreach(var game in gamesOwner.Games)
                     Writer.WriteLine($"-{game.Name}");
             }
