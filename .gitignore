@@ -1,5 +1,7 @@
 GameLister.sln
 .vs/
-GameLister/bin/Debug/
 GameLister/GameLister.csproj
 GameLister/obj/
+GameLister/bin/
+GameLister/Properties/
+GameLister/GameLister.csproj.user
