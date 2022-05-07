@@ -8,16 +8,18 @@ namespace GameLister.Services.GameListHandlers;
 
 public class JsonFileGameListHandler : IGameListHandler
 {
+    protected virtual string FileLocation { get; } = GameListData.FILE_LOCATION;
+
     public void CreateFileIfDoesntExist()
     {
-        if (File.Exists(GameListData.FileLocation))
+        if (File.Exists(FileLocation))
             return;
         SaveFile(Array.Empty<GamesOwner>());
     }
 
     public GamesOwner[]? GetAllGamesOwners()
     {
-        using StreamReader r = new(GameListData.FileLocation);
+        using StreamReader r = new(FileLocation);
         string json = r.ReadToEnd();
         return JsonConvert.DeserializeObject<GamesOwner[]>(json);
     }
@@ -38,10 +40,10 @@ public class JsonFileGameListHandler : IGameListHandler
         return foundGamesOwners.ToArray();
     }
 
-    public void SaveGame(string accountName, string gameName, out string badResponse)
+    public void SaveGame(string accountName, string gameName, out string badResponse, bool errorSameGame = true)
     {
         badResponse = string.Empty;
-        var allGamesOwners = GetAllGamesOwners();
+        var allGamesOwners = GetAllGamesOwners() ?? Array.Empty<GamesOwner>();
         if (accountName.IsNullOrEmpty())
         {
             badResponse = "Invalid file.";
@@ -54,9 +56,10 @@ public class JsonFileGameListHandler : IGameListHandler
             return;
         }
 
-        if (GameExists(allGamesOwners, accountName, gameName))
+        if (!allGamesOwners.IsNullOrEmpty() && GameExists(allGamesOwners, accountName, gameName))
         {
-            badResponse = "Game already exists.";
+            if(errorSameGame)
+                badResponse = "Game already exists.";
             return;
         }
 
@@ -122,7 +125,7 @@ public class JsonFileGameListHandler : IGameListHandler
         SaveFile(newGameOwners);
     }
 
-    public void SaveAccount(string accountName, out string badResponse)
+    public void SaveAccount(string accountName, out string badResponse, string? accountId = null)
     {
         badResponse = string.Empty;
         var allGamesOwners = GetAllGamesOwners();
@@ -141,7 +144,7 @@ public class JsonFileGameListHandler : IGameListHandler
         List<GamesOwner> newGameOwners = allGamesOwners.ToList();
         newGameOwners.Add(new()
         {
-            Account = (Account)accountName,
+            Account = new() { Id = accountId, Name = accountName },
             Games = Array.Empty<Game>()
         });
 
@@ -176,9 +179,10 @@ public class JsonFileGameListHandler : IGameListHandler
         SaveFile(newGameOwners);
     }
 
-    private static bool GameExists(GamesOwner[]? gamesOwners, string accountName, string gameName)
+    private static bool GameExists(GamesOwner[] gamesOwners, string accountName, string gameName)
     {
-        return gamesOwners.Any(owner => owner.Games.Any(game => game.Name == gameName));
+        var gameOwner = gamesOwners.FirstOrDefault(owner=>owner.Account.Name == accountName);
+        return gameOwner.Games.Any(game => game.Name == gameName);
     }
 
     private static bool AccountExists(GamesOwner[]? gamesOwners, string accountName)
@@ -189,9 +193,9 @@ public class JsonFileGameListHandler : IGameListHandler
         return gamesOwners.Any(gameOwner => gameOwner.Account.Name == accountName);
     }
 
-    private static void SaveFile(ICollection<GamesOwner> gameOwners)
+    private void SaveFile(ICollection<GamesOwner> gameOwners)
     {
-        using FileStream createStream = File.Create(GameListData.FileLocation);
+        using FileStream createStream = File.Create(FileLocation);
         using StreamWriter jsonStream = new(createStream);
         JsonSerializer jsonSerializer = new();
         jsonSerializer.Serialize(jsonStream, gameOwners);
