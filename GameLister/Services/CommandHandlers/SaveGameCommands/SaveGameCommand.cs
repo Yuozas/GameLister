@@ -1,23 +1,21 @@
 ﻿using GameLister.Models.Commands;
 using GameLister.Services.CommandHandlers.Templates;
-using GameLister.Services.CommandsHandlers.SaveGameCommands.Templates;
 using GameLister.Services.GameListHandlers;
-using GameLister.Services.ProgramHandlers;
 using GameLister.Services.ProgramWriters.Templates;
 
 namespace GameLister.Services.CommandsHandlers.SaveGameCommands;
 
-internal class SaveGameCommand : CommandHandler, ISaveGameCommand
+public class SaveGameCommand : CommandHandler
 {
     private readonly IProgramReader _reader;
-    private readonly IGameListHandler _gameListHandler;
+    private readonly IGameWriteHandler _gameWriteHandler;
     protected override string BadResponse => "Invalid file.";
 
-    public SaveGameCommand(LifeHandler lifeHandler, IProgramWriter writer, IProgramReader reader,
-        IGameListHandler gameListHandler) : base(lifeHandler, writer)
+    public SaveGameCommand(IProgramWriter writer, IProgramReader reader,
+        IGameWriteHandler gameWriteHandler) : base(writer)
     {
         _reader = reader;
-        _gameListHandler = gameListHandler;
+        _gameWriteHandler = gameWriteHandler;
     }
 
     public override Command Command { get; } = new() { Name = "save game", Description = "Save new game." };
@@ -33,7 +31,7 @@ internal class SaveGameCommand : CommandHandler, ISaveGameCommand
             var gameName = _reader.ReadLineDeclineEmpty(Writer);
             Writer.Clear();
 
-            _gameListHandler.SaveGame(accountName, gameName, out var badResponse);
+            _gameWriteHandler.SaveGame(accountName, gameName, out var badResponse);
             if (badResponse is not null)
                 RespondBad(badResponse);
         }

@@ -1,17 +1,14 @@
 ﻿using GameLister.Models.Commands;
-using GameLister.Services.ProgramHandlers;
 using GameLister.Services.ProgramWriters.Templates;
 
 namespace GameLister.Services.CommandHandlers.Templates;
 
 public abstract class CommandHandler : ICommandHandler
 {
-    protected readonly LifeHandler LifeHandler;
     protected IProgramWriter Writer;
     protected virtual string BadResponse { get; } = string.Empty;
-    protected CommandHandler(LifeHandler lifeHandler, IProgramWriter writer)
+    protected CommandHandler(IProgramWriter writer)
     {
-        LifeHandler = lifeHandler;
         Writer = writer;
     }
 

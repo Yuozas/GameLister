@@ -1,23 +1,19 @@
-﻿using GameLister.Data;
-using GameLister.Models.Accounts;
+﻿using GameLister.Models.Accounts;
 using GameLister.Models.Commands;
 using GameLister.Services.CommandHandlers.Templates;
-using GameLister.Services.CommandsHandlers.ListGamesCommands.Templates;
 using GameLister.Services.GameListHandlers;
-using GameLister.Services.ProgramHandlers;
 using GameLister.Services.ProgramWriters.Templates;
-using Newtonsoft.Json;
 
 namespace GameLister.Services.CommandsHandlers.ListGamesCommands;
 
-public class ListGamesCommand : CommandHandler, IListGamesCommand
+public class ListGamesCommand : CommandHandler
 {
     protected override string BadResponse { get; } = "Invalid file.";
-    private readonly IGameListHandler _gameListHandler;
-    public ListGamesCommand(LifeHandler lifeHandler, IProgramWriter writer, IGameListHandler gameListHandler) 
-        : base(lifeHandler, writer)
+    private readonly IGameReadHandler _gameReadHandler;
+    public ListGamesCommand(IProgramWriter writer, IGameReadHandler gameReadHandler) 
+        : base(writer)
     {
-        _gameListHandler = gameListHandler;
+        _gameReadHandler = gameReadHandler;
     }
 
     public override Command Command { get; } = new() { Name = "list", Description = "List all owned games." };
@@ -26,7 +22,7 @@ public class ListGamesCommand : CommandHandler, IListGamesCommand
     {
         try
         {
-            var owners = _gameListHandler.GetAllGamesOwners();
+            var owners = _gameReadHandler.GetAllGamesOwners();
             if (owners is null)
                 RespondBad("No games owned.");
             else
