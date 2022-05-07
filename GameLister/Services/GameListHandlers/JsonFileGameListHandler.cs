@@ -40,6 +40,26 @@ public class JsonFileGameListHandler : IGameListHandler
         return foundGamesOwners.ToArray();
     }
 
+    public SimilarGamesOwner[] FindSimilarGames(string name)
+    {
+        var gamesOwners = GetAllGamesOwners();
+        if (gamesOwners.IsNullOrEmpty())
+            return Array.Empty<SimilarGamesOwner>();
+
+        List<SimilarGamesOwner> foundGamesOwners = new();
+        foreach (var gamesOwner in gamesOwners)
+        {
+            var similarGames = gamesOwner.Games.Select(game=>new SimilarGame
+            {
+                Game = game,
+                Similarity = game.Name.CalculateSimilarity(name)
+            }).OrderBy(similarGame => similarGame.Similarity).ToArray() ?? Array.Empty<SimilarGame>();
+            if (!similarGames.IsNullOrEmpty())
+                foundGamesOwners.Add(new() { Games = similarGames, Account = gamesOwner.Account });
+        }
+        return foundGamesOwners.ToArray();
+    }
+
     public void SaveGame(string accountName, string gameName, out string badResponse, bool errorSameGame = true)
     {
         badResponse = string.Empty;

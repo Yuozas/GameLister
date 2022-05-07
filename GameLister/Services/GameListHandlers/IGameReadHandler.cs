@@ -6,4 +6,5 @@ public interface IGameReadHandler
 {
     public GamesOwner[]? GetAllGamesOwners();
     public GamesOwner[]? FindGames(string name);
+    public SimilarGamesOwner[] FindSimilarGames(string name);
 }

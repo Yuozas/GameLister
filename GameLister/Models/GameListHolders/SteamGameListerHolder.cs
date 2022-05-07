@@ -6,7 +6,6 @@ using GameLister.Services.ProgramHandlers;
 using GameLister.Services.ProgramWriters.Templates;
 using SteamAPIClient.Helpers.Api;
 using SteamAPIClient.Helpers.Api.Templates;
-using SteamAPIClient.Models.Api;
 using SteamAPIClient.Services.Api;
 using SteamAPIClient.Services.Steam;
 using SteamAPIClient.Services.Steam.Templates;
