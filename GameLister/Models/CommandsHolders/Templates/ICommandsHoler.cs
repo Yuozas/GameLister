@@ -4,5 +4,5 @@ namespace GameLister.Models.CommandsHolders;
 
 public interface ICommandsHolder
 {
-    public ICommandHandler[] Commands { get; }
+    public List<ICommandHandler> Commands { get; }
 }
