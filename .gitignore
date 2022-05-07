@@ -5,3 +5,6 @@ GameLister/obj/
 GameLister/bin/
 GameLister/Properties/
 GameLister/GameLister.csproj.user
+SteamAPIHandler/SteamAPIClient.csproj
+SteamAPIHandler/bin/
+SteamAPIHandler/obj/

@@ -1,22 +1,20 @@
 ﻿using GameLister.Models.Commands;
 using GameLister.Services.CommandHandlers.Templates;
-using GameLister.Services.CommandsHandlers.DeleteAccountCommands.Templates;
 using GameLister.Services.GameListHandlers;
-using GameLister.Services.ProgramHandlers;
 using GameLister.Services.ProgramWriters.Templates;
 
 namespace GameLister.Services.CommandsHandlers.DeleteAccountCommands;
 
-public class DeleteAccountCommand : CommandHandler, IDeleteAccountCommand
+public class DeleteAccountCommand : CommandHandler
 {
     private readonly IProgramReader _reader;
-    private readonly IGameListHandler _gameListHandler;
+    private readonly IAccountWriteHandler _accountHandler;
 
-    public DeleteAccountCommand(LifeHandler lifeHandler, IProgramWriter writer, 
-        IProgramReader reader, IGameListHandler gameListHandler) : base(lifeHandler, writer)
+    public DeleteAccountCommand(IProgramWriter writer, IProgramReader reader, 
+        IAccountWriteHandler accountHandler) : base(writer)
     {
         _reader = reader;
-        _gameListHandler = gameListHandler;
+        _accountHandler = accountHandler;
     }
 
     public override Command Command { get; } = new() { Name = "delete account", Description = "Deletes account that owns games." };
@@ -28,13 +26,13 @@ public class DeleteAccountCommand : CommandHandler, IDeleteAccountCommand
             Writer.WriteLine("Enter account name.");
             var accountName = _reader.ReadLineDeclineEmpty(Writer);
             Writer.Clear();
-            _gameListHandler.DeleteAccount(accountName, out var badResponse);
+            _accountHandler.DeleteAccount(accountName, out var badResponse);
             if (badResponse is not null)
                 RespondBad(badResponse);
         }
         catch
         {
-            RespondBad();
+            RespondBad("Failed to delete account, unhandled exception...");
         }
     }
 }

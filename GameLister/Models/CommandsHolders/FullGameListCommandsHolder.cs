@@ -12,18 +12,18 @@ using GameLister.Services.ProgramWriters.Templates;
 
 namespace GameLister.Data;
 
-public class GameListCommandsHolderData : GameListCommandsHolder
+public class FullGameListCommandsHolder : CommandsHolder
 {
-    public GameListCommandsHolderData(LifeHandler lifeHandler, IProgramWriter programWriter, IProgramReader reader, 
-        IGameListHandler gameListHandler) :
+    public FullGameListCommandsHolder(LifeHandler lifeHandler, IProgramWriter programWriter, IProgramReader reader,
+        IAccountWriteHandler accountHandler, IGameReadHandler gameReadHandler, IGameWriteHandler gameWriteHandler) :
         base(
             new ExitProgramCommand(lifeHandler, programWriter),
-            new ListGamesCommand(lifeHandler, programWriter, gameListHandler),
-            new SaveGameCommand(lifeHandler, programWriter, reader, gameListHandler),
-            new DeleteGameCommand(lifeHandler, programWriter, reader, gameListHandler),
-            new SaveAccountCommand(lifeHandler, programWriter, reader, gameListHandler),
-            new DeleteAccountCommand(lifeHandler, programWriter, reader, gameListHandler),
-            new FindGameCommand(lifeHandler, programWriter, reader, gameListHandler)
+            new ListGamesCommand(programWriter, gameReadHandler),
+            new SaveGameCommand(programWriter, reader, gameWriteHandler),
+            new DeleteGameCommand(programWriter, reader, gameWriteHandler),
+            new SaveAccountCommand(programWriter, reader, accountHandler),
+            new DeleteAccountCommand(programWriter, reader, accountHandler),
+            new FindGameCommand(programWriter, reader, gameReadHandler)
             )
     {
     }

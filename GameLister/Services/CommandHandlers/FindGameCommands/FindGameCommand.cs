@@ -1,23 +1,21 @@
 ﻿using GameLister.Extensions;
 using GameLister.Models.Commands;
-using GameLister.Services.CommandHandlers.FindGameCommands.Templates;
 using GameLister.Services.CommandHandlers.Templates;
 using GameLister.Services.GameListHandlers;
-using GameLister.Services.ProgramHandlers;
 using GameLister.Services.ProgramWriters.Templates;
 
 namespace GameLister.Services.CommandHandlers.FindGameCommands;
 
-internal class FindGameCommand : CommandHandler, IFindGameCommand
+public class FindGameCommand : CommandHandler
 {
     private readonly IProgramReader _reader;
-    private readonly IGameListHandler _gameListHandler;
+    private readonly IGameReadHandler _gameReadHandler;
     protected override string BadResponse => "Invalid file.";
-    public FindGameCommand(LifeHandler lifeHandler, IProgramWriter writer, IProgramReader reader, 
-        IGameListHandler gameListHandler) : base(lifeHandler, writer)
+    public FindGameCommand(IProgramWriter writer, IProgramReader reader, 
+        IGameReadHandler gameReadHandler) : base(writer)
     {
         _reader = reader;
-        _gameListHandler = gameListHandler;
+        _gameReadHandler = gameReadHandler;
     }
 
     public override Command Command { get; } = new() { Name = "find games", Description = "Find all games that has same words in name." };
@@ -29,7 +27,7 @@ internal class FindGameCommand : CommandHandler, IFindGameCommand
             Writer.WriteLine("Enter game name.");
             var gameName = _reader.ReadLineDeclineEmpty(Writer);
             Writer.Clear();
-            var gamesOwners = _gameListHandler.FindGames(gameName);
+            var gamesOwners = _gameReadHandler.FindGames(gameName);
             if (gamesOwners.IsNullOrEmpty())
             {
                 Writer.WriteLine("No similar games found.");

@@ -13,23 +13,25 @@ public class GameListCommandsHandler : ICommandsHandler
     private const string HELP_DESCRIPTION = "List all commands.";
     private readonly Dictionary<Command, Action> _commands;
     private readonly IProgramWriter _writer;
-    private readonly IGameListHandler _gameListHandler;
 
-    public GameListCommandsHandler(IProgramWriter writer, ICommandsHolder commandsHolder, IGameListHandler gameListHandler)
+    public GameListCommandsHandler(IProgramWriter writer, ICommandsHolder commandsHolder, 
+        IFileCreateHandler? fileCreateHandler = null)
     {
         _writer = writer;
-        _gameListHandler = gameListHandler;
-        _gameListHandler.CreateFileIfDoesntExist();
+
+        if(fileCreateHandler is not null)
+            fileCreateHandler.CreateFileIfDoesntExist();
 
         _commands = new()
         {
             [new() { Name = HELP_COMMAND_1, Description = HELP_DESCRIPTION }] = Help,
-            [new() { Name = HELP_COMMAND_2, Description = HELP_DESCRIPTION }] = Help
+            [new() { Name = HELP_COMMAND_2, Description = HELP_DESCRIPTION }] = Help,
         };
 
         var commandHandlers = commandsHolder.Commands;
         foreach (var commandHandler in commandHandlers)
             _commands.Add(commandHandler.Command, commandHandler.Run);
+
     }
 
     public void ReadCommand()
