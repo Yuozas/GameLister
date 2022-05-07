@@ -16,6 +16,7 @@ namespace GameLister.Services.ProgramHandlers
         private readonly ConsoleReader _reader;
         private readonly GameListerHolder[] _gameListerHolders;
         private readonly GameListHolderHolder _gameListHolderHolder;
+        private readonly CommandHandler _startCommandHandler;
         private readonly CommandHandler _switchCommandHandler;
         public ProgramHandler(LifeHandler lifeHandler, ConsoleWriter writer, ConsoleReader reader, 
             params GameListerHolder[] gameListerHolders)
@@ -25,9 +26,10 @@ namespace GameLister.Services.ProgramHandlers
             _reader = reader;
             _gameListerHolders = gameListerHolders;
             _gameListHolderHolder = new();
+            _startCommandHandler = new CommandsHandlerSwitchCommandsCommand(_writer, _reader, _gameListerHolders, _gameListHolderHolder, "start command lister");
             _switchCommandHandler = new CommandsHandlerSwitchCommandsCommand(_writer, _reader, _gameListerHolders, _gameListHolderHolder);
             foreach (var gameListerHolder in gameListerHolders)
-                gameListerHolder.CommandsHolder.Commands.Add(_switchCommandHandler);
+                gameListerHolder.CommandsHolder.Commands.Insert(0, _switchCommandHandler);
         }
 
         public void Run()
@@ -39,7 +41,7 @@ namespace GameLister.Services.ProgramHandlers
         private ICommandsHandler GetCommandsHandler()
         {
             if (_gameListHolderHolder.GameListerHolder is null)
-                return new GameListCommandsHandler(_writer, new CommandsHolder(_switchCommandHandler));
+                return new GameListCommandsHandler(_writer, new CommandsHolder(_startCommandHandler));
             return new GameListCommandsHandler(_writer, _gameListHolderHolder.GameListerHolder.CommandsHolder,
                 _gameListHolderHolder.GameListerHolder.FileCreateHandler);
         }
