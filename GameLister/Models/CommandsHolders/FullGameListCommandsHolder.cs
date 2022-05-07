@@ -23,7 +23,8 @@ public class FullGameListCommandsHolder : CommandsHolder
             new DeleteGameCommand(programWriter, reader, gameWriteHandler),
             new SaveAccountCommand(programWriter, reader, accountHandler),
             new DeleteAccountCommand(programWriter, reader, accountHandler),
-            new FindGameCommand(programWriter, reader, gameReadHandler)
+            new FindGameCommand(programWriter, reader, gameReadHandler),
+            new LevenshteinFindGameCommand(programWriter, reader, gameReadHandler)
             )
     {
     }

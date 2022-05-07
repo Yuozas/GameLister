@@ -8,14 +8,14 @@ namespace GameLister.Services.CommandHandlers.FindGameCommands;
 
 public class FindGameCommand : CommandHandler
 {
-    private readonly IProgramReader _reader;
-    private readonly IGameReadHandler _gameReadHandler;
+    protected readonly IProgramReader Reader;
+    protected readonly IGameReadHandler GameReadHandler;
     protected override string BadResponse => "Invalid file.";
     public FindGameCommand(IProgramWriter writer, IProgramReader reader, 
         IGameReadHandler gameReadHandler) : base(writer)
     {
-        _reader = reader;
-        _gameReadHandler = gameReadHandler;
+        Reader = reader;
+        GameReadHandler = gameReadHandler;
     }
 
     public override Command Command { get; } = new() { Name = "find games", Description = "Find all games that has same words in name." };
@@ -25,9 +25,9 @@ public class FindGameCommand : CommandHandler
         try
         {
             Writer.WriteLine("Enter game name.");
-            var gameName = _reader.ReadLineDeclineEmpty(Writer);
+            var gameName = Reader.ReadLineDeclineEmpty(Writer);
             Writer.Clear();
-            var gamesOwners = _gameReadHandler.FindGames(gameName);
+            var gamesOwners = GameReadHandler.FindGames(gameName);
             if (gamesOwners.IsNullOrEmpty())
             {
                 Writer.WriteLine("No similar games found.");

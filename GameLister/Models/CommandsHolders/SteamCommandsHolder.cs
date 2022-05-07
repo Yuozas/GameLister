@@ -22,6 +22,7 @@ public class SteamCommandsHolder : CommandsHolder
             new SaveSteamAccountCommand(programWriter, reader, accountHandler),
             new DeleteAccountCommand(programWriter, reader, accountHandler),
             new FindGameCommand(programWriter, reader, gameReadHandler),
+            new LevenshteinFindGameCommand(programWriter, reader, gameReadHandler),
             new SteamFetchGamesCommand(programWriter, gameReadHandler, gameWriteHandler, playerService)
             )
     {
